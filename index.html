@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIPHER PRO — Crypto Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #03060f;
+  --bg1: #060d1a;
+  --bg2: #0a1628;
+  --bg3: #0e1e35;
+  --card: #091422;
+  --card2: #0d1c30;
+  --border: #112240;
+  --border2: #1a3358;
+  --glow: rgba(0,210,255,0.06);
+  --blue: #00d2ff;
+  --blue2: #0099cc;
+  --green: #00ff9d;
+  --green2: #00cc7a;
+  --red: #ff4060;
+  --gold: #ffb700;
+  --purple: #b060ff;
+  --cyan: #00f5d4;
+  --pink: #ff60b0;
+  --text: #c8dff5;
+  --text2: #5a7a9a;
+  --muted: #2a4060;
+  --font: 'Outfit', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+  --radius: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* AMBIENT BG */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 0%, rgba(0,210,255,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 85% 100%, rgba(176,96,255,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 30% at 50% 50%, rgba(0,255,157,0.02) 0%, transparent 50%);
+}
+
+/* SETUP SCREEN */
+.setup-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: radial-gradient(ellipse at center, #071020 0%, #020810 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.setup-inner {
+  width: 100%; max-width: 460px; padding: 20px;
+  animation: fadeUp 0.6s ease;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:none } }
+.setup-logo-wrap { text-align: center; margin-bottom: 32px; }
+.setup-logo {
+  font-family: var(--mono); font-size: 3rem; font-weight: 700;
+  letter-spacing: 8px; color: var(--text);
+  text-shadow: 0 0 40px rgba(0,210,255,0.3);
+}
+.setup-logo em { color: var(--blue); font-style: normal; }
+.setup-logo-line {
+  height: 1px; background: linear-gradient(90deg, transparent, var(--blue), transparent);
+  margin: 8px auto; width: 200px; opacity: 0.5;
+}
+.setup-sub { font-size: 0.75rem; color: var(--text2); letter-spacing: 3px; text-transform: uppercase; }
+.setup-coins-row {
+  display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 24px;
+}
+.sc-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 10px;
+  font-family: var(--mono); font-size: 0.68rem; color: var(--text2);
+}
+.sc-pill img { width: 16px; height: 16px; border-radius: 50%; }
+.setup-box {
+  background: linear-gradient(135deg, var(--card2), var(--card));
+  border: 1px solid var(--border2); border-radius: 16px; padding: 28px;
+  box-shadow: 0 0 60px rgba(0,210,255,0.06);
+}
+.setup-box-title { font-size: 0.68rem; font-weight: 700; color: var(--text2); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+.free-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(0,255,157,0.08); border: 1px solid rgba(0,255,157,0.2);
+  border-radius: 20px; padding: 4px 14px;
+  font-size: 0.7rem; font-weight: 700; color: var(--green); letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+.setup-field { margin-bottom: 14px; }
+.setup-lbl { font-size: 0.65rem; font-weight: 700; color: var(--text2); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; display: block; }
+.setup-inp {
+  width: 100%; padding: 12px 16px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-family: var(--mono); font-size: 0.85rem;
+  outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.setup-inp:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,210,255,0.1); }
+.setup-btn {
+  width: 100%; padding: 14px;
+  background: linear-gradient(90deg, var(--blue2), var(--blue));
+  border: none; border-radius: 8px; color: #000;
+  font-family: var(--font); font-weight: 800; font-size: 0.9rem;
+  letter-spacing: 1px; cursor: pointer; transition: all 0.2s;
+  text-transform: uppercase;
+}
+.setup-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(0,210,255,0.25); }
+.setup-err { color: var(--red); font-size: 0.72rem; margin-top: 8px; text-align: center; display: none; }
+.setup-hint { font-size: 0.68rem; color: var(--muted); margin-top: 12px; text-align: center; line-height: 1.7; }
+.setup-hint a { color: var(--blue); text-decoration: none; }
+
+/* HEADER */
+.header {
+  position: sticky; top: 0; z-index: 200;
+  height: 56px; display: flex; align-items: center; gap: 16px;
+  padding: 0 20px;
+  background: rgba(3,6,15,0.92); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.h-logo { font-family: var(--mono); font-size: 1rem; font-weight: 700; letter-spacing: 5px; }
+.h-logo em { color: var(--blue); font-style: normal; }
+.h-stats { display: flex; gap: 20px; margin-left: 16px; }
+.hst { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-family: var(--mono); }
+.hst-k { color: var(--text2); }
+.hst-v { color: var(--text); font-weight: 600; }
+.up { color: var(--green); }
+.dn { color: var(--red); }
+.h-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.live-pill {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(0,255,157,0.06); border: 1px solid rgba(0,255,157,0.15);
+  border-radius: 20px; padding: 5px 14px;
+}
+.ldot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,255,157,0.4)} 50%{opacity:0.5;box-shadow:0 0 0 5px rgba(0,255,157,0)} }
+.ltxt { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; color: var(--green); }
+.nav-bar { display: flex; gap: 2px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 3px; }
+.ntab {
+  padding: 5px 15px; border-radius: 6px; border: none; background: none;
+  font-family: var(--font); font-size: 0.72rem; font-weight: 700;
+  color: var(--text2); cursor: pointer; transition: all 0.2s; letter-spacing: 0.5px;
+}
+.ntab.on, .ntab:hover { background: var(--blue); color: #000; }
+.key-btn {
+  background: none; border: 1px solid var(--border); border-radius: 7px;
+  color: var(--text2); font-size: 0.68rem; padding: 5px 10px; cursor: pointer;
+  transition: all 0.15s; font-family: var(--font);
+}
+.key-btn:hover { border-color: var(--border2); color: var(--text); }
+
+/* TICKER */
+.ticker {
+  background: var(--bg1); border-bottom: 1px solid var(--border);
+  overflow: hidden; padding: 5px 0;
+}
+.ticker-track { display: flex; animation: tickerScroll 60s linear infinite; white-space: nowrap; }
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes tickerScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.tick { display: inline-flex; align-items: center; gap: 8px; padding: 0 20px; border-right: 1px solid var(--border); font-family: var(--mono); font-size: 0.69rem; }
+.tick img { width: 18px; height: 18px; border-radius: 50%; }
+.tick-sym { color: var(--text2); }
+.tick-p { color: var(--text); font-weight: 600; }
+
+/* CONTAINER */
+.wrap { position: relative; z-index: 1; max-width: 1800px; margin: 0 auto; padding: 16px 20px; }
+
+/* MACRO METERS */
+.meters { display: grid; grid-template-columns: repeat(6,1fr); gap: 10px; margin-bottom: 14px; }
+.meter {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 13px 15px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+}
+.meter::after {
+  content: ''; position: absolute; top: -20px; right: -20px;
+  width: 60px; height: 60px; border-radius: 50%; opacity: 0.08;
+}
+.meter.c1::after{background:var(--blue);}
+.meter.c2::after{background:var(--green);}
+.meter.c3::after{background:var(--gold);}
+.meter.c4::after{background:var(--red);}
+.meter.c5::after{background:var(--purple);}
+.meter.c6::after{background:var(--cyan);}
+.meter:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.m-lbl { font-size: 0.58rem; font-weight: 700; color: var(--text2); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 5px; }
+.m-val { font-family: var(--mono); font-size: 1.15rem; font-weight: 700; margin-bottom: 3px; }
+.m-sub { font-size: 0.67rem; display: flex; align-items: center; gap: 5px; }
+.m-bar { height: 2px; background: var(--border); border-radius: 1px; margin-top: 8px; overflow: hidden; }
+.m-fill { height: 100%; border-radius: 1px; transition: width 1s ease; }
+
+/* SIGNAL STRIP */
+.signal-strip {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 9px 16px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; overflow: hidden;
+}
+.ss-hd { font-size: 0.58rem; font-weight: 800; color: var(--text2); letter-spacing: 2px; text-transform: uppercase; flex-shrink: 0; }
+.sig {
+  display: flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 12px; border: 1px solid;
+  font-size: 0.66rem; font-weight: 700; font-family: var(--mono); white-space: nowrap;
+}
+.sig.buy { background: rgba(0,255,157,0.06); border-color: rgba(0,255,157,0.2); color: var(--green); }
+.sig.sell { background: rgba(255,64,96,0.06); border-color: rgba(255,64,96,0.2); color: var(--red); }
+.sig.watch { background: rgba(255,183,0,0.06); border-color: rgba(255,183,0,0.2); color: var(--gold); }
+.sig.info { background: rgba(0,210,255,0.06); border-color: rgba(0,210,255,0.2); color: var(--blue); }
+.sdot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+/* MAIN LAYOUT */
+.main-layout { display: grid; grid-template-columns: 1fr 340px; gap: 14px; margin-bottom: 14px; }
+
+/* COIN TABLE */
+.table-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+}
+.tc-hdr {
+  display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border);
+}
+.tc-title { font-size: 0.82rem; font-weight: 800; letter-spacing: 0.3px; }
+.tc-filters { display: flex; gap: 5px; margin-left: auto; }
+.flt {
+  padding: 3px 10px; border-radius: 12px; border: 1px solid var(--border);
+  background: none; color: var(--text2); font-family: var(--font); font-size: 0.67rem;
+  font-weight: 700; cursor: pointer; transition: all 0.15s;
+}
+.flt.on, .flt:hover { background: rgba(0,210,255,0.12); border-color: var(--blue); color: var(--blue); }
+
+.ct { width: 100%; border-collapse: collapse; }
+.ct th {
+  padding: 7px 10px; text-align: right;
+  font-size: 0.59rem; font-weight: 700; color: var(--text2);
+  letter-spacing: 1px; text-transform: uppercase;
+  border-bottom: 1px solid var(--border); cursor: pointer; white-space: nowrap;
+}
+.ct th:nth-child(1), .ct th:nth-child(2) { text-align: left; }
+.ct th:hover { color: var(--text); }
+.ct td {
+  padding: 10px; border-bottom: 1px solid rgba(17,34,64,0.7);
+  font-size: 0.79rem; text-align: right; font-family: var(--mono);
+  vertical-align: middle;
+}
+.ct td:nth-child(1) { text-align: left; width: 22px; color: var(--text2); font-size: 0.63rem; }
+.ct td:nth-child(2) { text-align: left; }
+.ct tr { transition: background 0.15s; cursor: pointer; }
+.ct tr:hover td { background: rgba(0,210,255,0.03); }
+.ct tr:last-child td { border-bottom: none; }
+
+.coin-cell { display: flex; align-items: center; gap: 10px; }
+.coin-img-wrap {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.coin-img-wrap img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.coin-img-fallback {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800;
+}
+.coin-name { font-weight: 800; font-size: 0.8rem; color: var(--text); font-family: var(--font); }
+.coin-sym { font-size: 0.63rem; color: var(--text2); font-family: var(--mono); }
+.coin-sec {
+  font-size: 0.54rem; font-weight: 800; padding: 1px 5px; border-radius: 3px;
+  margin-top: 1px; display: inline-block; letter-spacing: 0.5px;
+}
+.chg-up { color: var(--green); }
+.chg-dn { color: var(--red); }
+
+.badge-signal {
+  display: inline-block; padding: 2px 7px; border-radius: 4px;
+  font-size: 0.6rem; font-weight: 800; font-family: var(--font); letter-spacing: 0.5px;
+}
+.badge-signal.b { background: rgba(0,255,157,0.1); color: var(--green); }
+.badge-signal.s { background: rgba(255,64,96,0.1); color: var(--red); }
+.badge-signal.n { background: rgba(255,183,0,0.1); color: var(--gold); }
+.badge-signal.w { background: rgba(0,210,255,0.1); color: var(--blue); }
+
+.cycle-tag {
+  display: inline-block; padding: 2px 7px; border-radius: 4px;
+  font-size: 0.6rem; font-weight: 700; font-family: var(--font);
+}
+
+.spark-line { display: flex; align-items: flex-end; gap: 1.5px; height: 22px; }
+.sp-b { width: 3px; border-radius: 1px; min-height: 2px; }
+
+/* COIN DETAIL PANEL */
+.coin-detail-panel {
+  position: fixed; right: -420px; top: 0; bottom: 0; width: 420px;
+  background: var(--bg1); border-left: 1px solid var(--border2);
+  z-index: 300; transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+  overflow-y: auto; padding: 20px;
+}
+.coin-detail-panel.open { right: 0; }
+.cdp-close {
+  position: absolute; top: 16px; right: 16px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text2); width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1rem; transition: all 0.15s;
+}
+.cdp-close:hover { color: var(--red); border-color: var(--red); }
+.cdp-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-right: 40px; }
+.cdp-img { width: 52px; height: 52px; border-radius: 50%; }
+.cdp-name { font-size: 1.1rem; font-weight: 800; }
+.cdp-sym { font-family: var(--mono); font-size: 0.75rem; color: var(--text2); }
+.cdp-section { margin-bottom: 16px; }
+.cdp-sec-title {
+  font-size: 0.6rem; font-weight: 800; color: var(--text2);
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;
+  padding-bottom: 5px; border-bottom: 1px solid var(--border);
+}
+.cdp-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.75rem; border-bottom: 1px solid rgba(17,34,64,0.5); }
+.cdp-row:last-child { border-bottom: none; }
+.cdp-k { color: var(--text2); }
+.cdp-v { color: var(--text); font-family: var(--mono); font-weight: 600; text-align: right; max-width: 200px; }
+.social-links { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 6px; }
+.social-link {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 4px 10px;
+  font-size: 0.68rem; color: var(--text2); text-decoration: none;
+  transition: all 0.15s; font-family: var(--mono);
+}
+.social-link:hover { border-color: var(--blue); color: var(--blue); }
+.news-item { padding: 8px 0; border-bottom: 1px solid rgba(17,34,64,0.5); font-size: 0.73rem; }
+.news-item:last-child { border-bottom: none; }
+.news-item::before { content: '→ '; color: var(--blue); }
+.event-item { padding: 6px 0; border-bottom: 1px solid rgba(17,34,64,0.5); font-size: 0.72rem; }
+.event-item:last-child { border-bottom: none; }
+.event-date { font-family: var(--mono); font-size: 0.65rem; color: var(--blue); }
+.ta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ta-box { background: var(--card2); border-radius: 7px; padding: 9px 10px; }
+.ta-lbl { font-size: 0.58rem; color: var(--text2); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+.ta-val { font-family: var(--mono); font-size: 0.85rem; font-weight: 700; }
+.dca-zones { display: flex; flex-direction: column; gap: 5px; }
+.dca-zone {
+  padding: 6px 10px; border-radius: 6px; font-size: 0.72rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.dca-zone.z1 { background: rgba(0,255,157,0.1); border: 1px solid rgba(0,255,157,0.2); }
+.dca-zone.z2 { background: rgba(0,255,157,0.07); border: 1px solid rgba(0,255,157,0.15); }
+.dca-zone.z3 { background: rgba(0,255,157,0.04); border: 1px solid rgba(0,255,157,0.1); }
+.dca-zone.tp { background: rgba(255,64,96,0.07); border: 1px solid rgba(255,64,96,0.15); }
+
+/* RIGHT COLUMN */
+.right-col { display: flex; flex-direction: column; gap: 12px; }
+
+/* DOM RING */
+.dom-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;
+}
+.card-hd { font-size: 0.6rem; font-weight: 800; color: var(--text2); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+.dom-ring-wrap { position: relative; width: 160px; height: 160px; margin: 0 auto 14px; }
+.dom-ring-wrap svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.dom-ring-ctr { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.dom-pct { font-family: var(--mono); font-size: 1.7rem; font-weight: 700; color: var(--text); }
+.dom-sub { font-size: 0.6rem; color: var(--text2); letter-spacing: 1px; }
+.dom-legs { display: flex; flex-direction: column; gap: 8px; }
+.dom-leg { display: flex; align-items: center; gap: 8px; font-size: 0.73rem; }
+.dom-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+.dom-nm { flex: 1; color: var(--text2); }
+.dom-pct2 { font-family: var(--mono); font-weight: 700; color: var(--text); }
+.dom-chg2 { font-family: var(--mono); font-size: 0.65rem; width: 48px; text-align: right; }
+.dom-sig-box { margin-top: 10px; padding: 9px 10px; background: var(--bg2); border-radius: 7px; font-size: 0.69rem; color: var(--text2); line-height: 1.5; }
+
+/* ALERTS */
+.alerts-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; flex: 1;
+}
+.alert-item {
+  padding: 8px 10px; border-radius: 7px; margin-bottom: 6px;
+  border: 1px solid; display: flex; gap: 8px;
+  font-size: 0.71rem; line-height: 1.4; animation: slideIn 0.3s ease;
+}
+@keyframes slideIn { from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:none} }
+.alert-item.fire { background: rgba(255,64,96,0.05); border-color: rgba(255,64,96,0.15); }
+.alert-item.warn { background: rgba(255,183,0,0.05); border-color: rgba(255,183,0,0.15); }
+.alert-item.ok { background: rgba(0,255,157,0.05); border-color: rgba(0,255,157,0.15); }
+.alert-item.info { background: rgba(0,210,255,0.05); border-color: rgba(0,210,255,0.15); }
+.al-ico { font-size: 0.85rem; flex-shrink: 0; }
+.al-txt { color: var(--text2); }
+.al-txt b { color: var(--text); }
+.al-time { font-family: var(--mono); font-size: 0.59rem; color: var(--muted); margin-top: 2px; }
+.add-alert-btn {
+  width: 100%; padding: 7px; border-radius: 7px; margin-top: 4px;
+  border: 1px dashed var(--border2); background: none;
+  color: var(--text2); font-family: var(--font); font-size: 0.7rem;
+  cursor: pointer; transition: all 0.2s;
+}
+.add-alert-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+/* MONEY FLOW */
+.flow-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 14px; }
+.flow-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px; display: flex; flex-direction: column; gap: 7px;
+}
+.fc-hdr { display: flex; align-items: center; justify-content: space-between; }
+.fc-asset { font-size: 0.75rem; font-weight: 800; color: var(--text); }
+.fc-ico { font-size: 1.1rem; }
+.fc-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.fc-fill { height: 100%; border-radius: 2px; transition: width 1s; }
+.fc-in { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+.fc-out { background: linear-gradient(90deg, var(--red), var(--pink)); }
+.fc-stats { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.65rem; }
+.fc-desc { font-size: 0.65rem; color: var(--text2); line-height: 1.4; }
+.fc-sig {
+  font-size: 0.62rem; font-weight: 800; padding: 2px 8px; border-radius: 4px;
+  align-self: flex-start; letter-spacing: 0.5px;
+}
+.fc-sig.in { background: rgba(0,255,157,0.1); color: var(--green); }
+.fc-sig.out { background: rgba(255,64,96,0.1); color: var(--red); }
+.fc-sig.mx { background: rgba(255,183,0,0.1); color: var(--gold); }
+
+/* VOLUME PROFILE */
+.vp-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 14px; }
+.vp-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.vp-title { font-size: 0.82rem; font-weight: 800; }
+.vp-legend { display: flex; gap: 14px; }
+.vpl { display: flex; align-items: center; gap: 4px; font-size: 0.62rem; color: var(--text2); }
+.vpld { width: 9px; height: 3px; border-radius: 2px; }
+.vp-body { background: var(--bg2); border-radius: 8px; padding: 10px; display: flex; gap: 8px; }
+.vp-price-axis { display: flex; flex-direction: column; justify-content: space-between; width: 58px; flex-shrink: 0; font-family: var(--mono); font-size: 0.55rem; color: var(--text2); }
+.vp-bars { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.vp-row { display: flex; align-items: center; gap: 5px; min-height: 13px; flex: 1; }
+.vp-bar { border-radius: 0 2px 2px 0; cursor: pointer; transition: opacity 0.2s; min-height: 13px; }
+.vp-bar:hover { opacity: 0.75; }
+.vp-label { font-family: var(--mono); font-size: 0.55rem; white-space: nowrap; }
+.vp-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 12px; }
+.vp-stat { background: var(--bg2); border-radius: 7px; padding: 9px; }
+.vp-stat-lbl { font-size: 0.57rem; color: var(--text2); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+.vp-stat-val { font-family: var(--mono); font-size: 0.9rem; font-weight: 700; margin-bottom: 3px; }
+.vp-stat-desc { font-size: 0.65rem; color: var(--text2); line-height: 1.4; }
+
+/* STRATEGIES */
+.strat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.strat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; }
+.strat-title { font-size: 0.78rem; font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.strat-badge { font-size: 0.58rem; padding: 2px 8px; border-radius: 10px; font-weight: 800; letter-spacing: 0.5px; background: rgba(0,255,157,0.1); color: var(--green); border: 1px solid rgba(0,255,157,0.2); }
+.strat-desc { font-size: 0.7rem; color: var(--text2); line-height: 1.5; margin-bottom: 10px; }
+.rule { font-size: 0.68rem; padding: 5px 8px; border-radius: 5px; background: var(--bg2); border-left: 2px solid; color: var(--text2); margin-bottom: 4px; line-height: 1.4; }
+.rule.g { border-color: var(--green); }
+.rule.r { border-color: var(--red); }
+.rule.w { border-color: var(--gold); }
+.rule.b { border-color: var(--blue); }
+
+/* MACRO */
+.macro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.macro-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.ev-item { padding: 9px 0; border-bottom: 1px solid rgba(17,34,64,0.7); }
+.ev-item:last-child { border-bottom: none; }
+.ev-date { font-family: var(--mono); font-size: 0.65rem; color: var(--blue); }
+.ev-name { font-size: 0.77rem; font-weight: 700; margin: 2px 0; }
+.ev-imp { display: inline-block; font-size: 0.57rem; font-weight: 800; padding: 1px 6px; border-radius: 3px; letter-spacing: 0.5px; margin-right: 5px; }
+.ev-imp.H { background: rgba(255,64,96,0.12); color: var(--red); }
+.ev-imp.M { background: rgba(255,183,0,0.12); color: var(--gold); }
+.ev-crypto { font-size: 0.68rem; color: var(--text2); margin-top: 3px; }
+
+/* PORTFOLIO */
+.port-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.port-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.port-entry { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(17,34,64,0.5); font-size: 0.77rem; }
+.port-entry:last-child { border-bottom: none; }
+.port-ico { width: 28px; height: 28px; border-radius: 50%; }
+.port-sym { font-family: var(--mono); font-weight: 700; color: var(--text); width: 44px; }
+.port-info { flex: 1; font-size: 0.68rem; color: var(--text2); }
+.port-pnl { font-family: var(--mono); font-size: 0.77rem; font-weight: 700; text-align: right; }
+.port-total { margin-top: 10px; padding: 10px 12px; background: var(--bg2); border-radius: 7px; font-family: var(--mono); font-size: 0.75rem; }
+.add-btn {
+  width: 100%; padding: 8px; border-radius: 7px;
+  border: 1px dashed var(--border2); background: none;
+  color: var(--text2); font-family: var(--font); font-size: 0.7rem;
+  cursor: pointer; transition: all 0.2s; margin-top: 8px;
+}
+.add-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+/* AI AGENT CHAT */
+.ai-agent {
+  position: fixed; bottom: 20px; right: 20px; z-index: 400;
+}
+.ai-toggle-btn {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue2), var(--purple));
+  border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; box-shadow: 0 4px 24px rgba(0,210,255,0.3);
+  transition: all 0.2s; position: relative;
+}
+.ai-toggle-btn:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(0,210,255,0.4); }
+.ai-notif {
+  position: absolute; top: 0; right: 0; width: 14px; height: 14px;
+  background: var(--green); border-radius: 50%; border: 2px solid var(--bg);
+  animation: blink 2s infinite;
+}
+.ai-chat-box {
+  position: absolute; bottom: 70px; right: 0; width: 380px;
+  background: var(--bg1); border: 1px solid var(--border2);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  display: none; animation: popUp 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.ai-chat-box.show { display: block; }
+@keyframes popUp { from{opacity:0;transform:scale(0.9) translateY(10px)} to{opacity:1;transform:none} }
+.ai-chat-hdr {
+  padding: 14px 16px; background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.ai-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue2), var(--purple));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.ai-name { font-size: 0.82rem; font-weight: 800; }
+.ai-status { font-size: 0.63rem; color: var(--green); font-family: var(--mono); }
+.ai-close-btn { margin-left: auto; background: none; border: none; color: var(--text2); cursor: pointer; font-size: 1rem; }
+.ai-close-btn:hover { color: var(--red); }
+.ai-quick-q { padding: 10px 14px; display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid var(--border); background: var(--bg2); }
+.qq {
+  padding: 4px 10px; border-radius: 12px;
+  background: rgba(0,210,255,0.08); border: 1px solid rgba(0,210,255,0.15);
+  color: var(--blue); font-size: 0.63rem; font-weight: 700; cursor: pointer;
+  transition: all 0.15s; white-space: nowrap;
+}
+.qq:hover { background: rgba(0,210,255,0.15); }
+.ai-messages { height: 300px; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.ai-messages::-webkit-scrollbar { width: 4px; }
+.ai-messages::-webkit-scrollbar-track { background: transparent; }
+.ai-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.msg { max-width: 88%; display: flex; flex-direction: column; gap: 3px; }
+.msg.bot { align-self: flex-start; }
+.msg.user { align-self: flex-end; }
+.msg-bubble {
+  padding: 9px 12px; border-radius: 10px; font-size: 0.74rem; line-height: 1.5;
+}
+.msg.bot .msg-bubble { background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 3px; }
+.msg.user .msg-bubble { background: rgba(0,210,255,0.12); border: 1px solid rgba(0,210,255,0.2); color: var(--text); border-bottom-right-radius: 3px; }
+.msg-time { font-family: var(--mono); font-size: 0.57rem; color: var(--muted); }
+.msg.user .msg-time { text-align: right; }
+.typing-ind { display: flex; gap: 4px; align-items: center; padding: 10px 12px; }
+.typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: typingBounce 1.2s infinite; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce { 0%,100%{transform:translateY(0);opacity:0.5} 50%{transform:translateY(-5px);opacity:1} }
+.ai-input-row {
+  padding: 12px 14px; border-top: 1px solid var(--border);
+  display: flex; gap: 8px; background: var(--bg2);
+}
+.ai-input {
+  flex: 1; padding: 9px 12px; background: var(--bg);
+  border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); font-family: var(--font); font-size: 0.77rem;
+  outline: none; transition: border-color 0.2s;
+}
+.ai-input:focus { border-color: var(--blue); }
+.ai-send-btn {
+  padding: 9px 14px; border-radius: 8px; border: none;
+  background: var(--blue); color: #000;
+  font-family: var(--font); font-weight: 700; font-size: 0.75rem;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.ai-send-btn:hover { background: var(--cyan); }
+.ai-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* MODALS */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 500; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.modal-bg.show { opacity: 1; pointer-events: all; }
+.modal { background: var(--card2); border: 1px solid var(--border2); border-radius: 14px; padding: 22px; width: 90%; max-width: 420px; }
+.modal h3 { font-size: 0.85rem; font-weight: 800; margin-bottom: 14px; }
+.mf { margin-bottom: 10px; }
+.ml { font-size: 0.62rem; font-weight: 700; color: var(--text2); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; display: block; }
+.mi, .ms {
+  width: 100%; padding: 9px 12px; background: var(--bg);
+  border: 1px solid var(--border); border-radius: 7px;
+  color: var(--text); font-family: var(--font); font-size: 0.8rem; outline: none;
+  transition: border-color 0.2s;
+}
+.mi:focus, .ms:focus { border-color: var(--blue); }
+.m-btns { display: flex; gap: 8px; margin-top: 14px; }
+.mbtn { flex: 1; padding: 9px; border-radius: 7px; font-family: var(--font); font-size: 0.78rem; font-weight: 800; cursor: pointer; border: none; transition: all 0.18s; }
+.mbtn.p { background: var(--blue); color: #000; }
+.mbtn.p:hover { background: var(--cyan); }
+.mbtn.c { background: var(--card); color: var(--text2); border: 1px solid var(--border); }
+
+/* RESPONSIVE */
+@media(max-width:1200px){.main-layout{grid-template-columns:1fr;}.meters{grid-template-columns:repeat(3,1fr);}.flow-grid{grid-template-columns:repeat(3,1fr);}.strat-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:768px){.meters{grid-template-columns:repeat(2,1fr);}.strat-grid{grid-template-columns:1fr;}.flow-grid{grid-template-columns:1fr 1fr;}.h-stats{display:none;}.ai-chat-box{width:95vw;right:-10px;}.port-grid{grid-template-columns:1fr;}.macro-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- SETUP SCREEN -->
+<div class="setup-screen" id="setup-screen">
+  <div class="setup-inner">
+    <div class="setup-logo-wrap">
+      <div class="setup-logo">CI<em>PH</em>ER</div>
+      <div class="setup-logo-line"></div>
+      <div class="setup-sub">Pro Crypto Intelligence Dashboard</div>
+    </div>
+    <div class="setup-coins-row" id="setup-coins-row"></div>
+    <div class="setup-box">
+      <div class="setup-box-title">Activate your dashboard</div>
+      <div class="free-badge">✅ Powered by Groq — 100% Free</div>
+      <div class="setup-field">
+        <label class="setup-lbl">Groq API Key</label>
+        <input class="setup-inp" type="password" id="setup-key" placeholder="gsk_...">
+      </div>
+      <button class="setup-btn" onclick="activate()">⚡ Launch CIPHER PRO</button>
+      <div class="setup-err" id="setup-err">Key must start with gsk_ — get it free at console.groq.com</div>
+      <div class="setup-hint">
+        Free key at <a href="https://console.groq.com" target="_blank">console.groq.com</a> → API Keys → Create API Key<br>
+        No credit card needed · 14,400 req/day · Key stored only in your browser
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COIN DETAIL PANEL -->
+<div class="coin-detail-panel" id="coin-panel">
+  <div class="cdp-close" onclick="closePanel()">✕</div>
+  <div id="cdp-content"></div>
+</div>
+
+<!-- ALERT MODAL -->
+<div class="modal-bg" id="alert-modal">
+  <div class="modal">
+    <h3>⚡ Add Custom Alert</h3>
+    <div class="mf"><label class="ml">Asset</label><select class="ms" id="m-asset"></select></div>
+    <div class="mf"><label class="ml">Condition</label>
+      <select class="ms" id="m-cond">
+        <option>Price above</option><option>Price below</option>
+        <option>BTC Dominance above 60%</option><option>BTC Dominance below 50%</option>
+        <option>Altseason index above 75</option><option>Fear &amp; Greed below 20</option>
+        <option>Volume spike 2x+</option><option>7d change above +15%</option>
+        <option>Money flow reversal detected</option>
+      </select>
+    </div>
+    <div class="mf"><label class="ml">Value / Threshold</label><input class="mi" id="m-val" placeholder="e.g. 0.45 or 65%"></div>
+    <div class="mf"><label class="ml">Note (optional)</label><input class="mi" id="m-note" placeholder="Your note..."></div>
+    <div class="m-btns">
+      <button class="mbtn c" onclick="closeModal('alert-modal')">Cancel</button>
+      <button class="mbtn p" onclick="saveAlert()">💾 Save Alert</button>
+    </div>
+  </div>
+</div>
+
+<!-- DCA MODAL -->
+<div class="modal-bg" id="dca-modal">
+  <div class="modal">
+    <h3>📝 Log DCA Buy</h3>
+    <div class="mf"><label class="ml">Coin</label><select class="ms" id="dca-coin-sel"></select></div>
+    <div class="mf"><label class="ml">Amount Invested (USD)</label><input class="mi" id="dca-usd" type="number" placeholder="500"></div>
+    <div class="mf"><label class="ml">Buy Price</label><input class="mi" id="dca-buy-price" type="number" placeholder="0.35" step="any"></div>
+    <div class="m-btns">
+      <button class="mbtn c" onclick="closeModal('dca-modal')">Cancel</button>
+      <button class="mbtn p" onclick="saveDCA()">✅ Log Buy</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="h-logo">CI<em>PH</em>ER <span style="font-size:0.5rem;color:var(--text2);letter-spacing:2px">PRO</span></div>
+  <div class="h-stats">
+    <div class="hst"><span class="hst-k">MCap</span><span class="hst-v" id="h-mc">—</span><span id="h-mc-chg">—</span></div>
+    <div class="hst"><span class="hst-k">Vol 24h</span><span class="hst-v" id="h-vol">—</span></div>
+    <div class="hst"><span class="hst-k">BTC Dom</span><span class="hst-v" id="h-dom">—</span></div>
+    <div class="hst"><span class="hst-k">F&G</span><span class="hst-v" id="h-fg">—</span></div>
+    <div class="hst"><span class="hst-k">Alts</span><span class="hst-v" id="h-alt">34/100</span></div>
+  </div>
+  <div class="h-right">
+    <div class="nav-bar">
+      <button class="ntab on" onclick="switchView('market',this)">Market</button>
+      <button class="ntab" onclick="switchView('strategies',this)">Strategies</button>
+      <button class="ntab" onclick="switchView('macro',this)">Macro</button>
+      <button class="ntab" onclick="switchView('portfolio',this)">Portfolio</button>
+    </div>
+    <div class="live-pill"><div class="ldot"></div><div class="ltxt">LIVE</div></div>
+    <button class="key-btn" onclick="document.getElementById('setup-screen').style.display='flex'">🔑 Key</button>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker"><div class="ticker-track" id="ticker-track"></div></div>
+
+<div class="wrap">
+
+  <!-- METERS -->
+  <div class="meters">
+    <div class="meter c1"><div class="m-lbl">BTC Dominance</div><div class="m-val" id="mc-dom">—</div><div class="m-sub"><span id="mc-dom-chg" class="dn">—</span></div><div class="m-bar"><div class="m-fill" id="mc-dom-fill" style="width:0;background:linear-gradient(90deg,var(--blue),var(--purple))"></div></div></div>
+    <div class="meter c2"><div class="m-lbl">Altcoin Season</div><div class="m-val" id="mc-alt">34/100</div><div class="m-sub"><span class="dn">Bitcoin Season</span></div><div class="m-bar"><div class="m-fill" style="width:34%;background:linear-gradient(90deg,var(--gold),var(--green))"></div></div></div>
+    <div class="meter c3"><div class="m-lbl">Fear & Greed</div><div class="m-val" id="mc-fg" style="color:var(--red)">—</div><div class="m-sub"><span id="mc-fg-lbl" class="dn">—</span></div><div class="m-bar"><div class="m-fill" id="mc-fg-fill" style="width:0;background:linear-gradient(90deg,var(--red),var(--gold))"></div></div></div>
+    <div class="meter c4"><div class="m-lbl">Total Market Cap</div><div class="m-val" id="mc-tmcap">—</div><div class="m-sub"><span id="mc-tmcap-chg" class="dn">—</span> <span style="color:var(--text2)">24h</span></div></div>
+    <div class="meter c5"><div class="m-lbl">Market Score</div><div class="m-val" id="mc-score">—</div><div class="m-sub"><span id="mc-verdict" class="dn">—</span></div></div>
+    <div class="meter c6"><div class="m-lbl">24h BTC Volume</div><div class="m-val" id="mc-bvol">—</div><div class="m-sub"><span style="color:var(--text2)">Monitoring 10 coins</span></div></div>
+  </div>
+
+  <!-- SIGNAL STRIP -->
+  <div class="signal-strip">
+    <span class="ss-hd">SIGNALS</span>
+    <div class="sig buy"><div class="sdot"></div>F&G Extreme Fear → DCA Zone Active</div>
+    <div class="sig sell"><div class="sdot"></div>BTC Dom 62% → Bitcoin Season</div>
+    <div class="sig watch"><div class="sdot"></div>Gold Inflow +72% → Risk-Off</div>
+    <div class="sig info"><div class="sdot"></div>BTC POC $65.2K → Strong Support</div>
+    <div class="sig watch"><div class="sdot"></div>KAS Whale Spike → Watch</div>
+    <div class="sig buy"><div class="sdot"></div>AI Tokens (AKT/ORAI/CGPT) Holding</div>
+  </div>
+
+  <!-- ===== VIEWS ===== -->
+
+  <!-- MARKET VIEW -->
+  <div id="view-market">
+    <div class="main-layout">
+      <!-- TABLE -->
+      <div class="table-card">
+        <div class="tc-hdr">
+          <div class="tc-title">📊 Live Prices — 10 Coins</div>
+          <div class="tc-filters">
+            <button class="flt on" onclick="filterTable('all',this)">All</button>
+            <button class="flt" onclick="filterTable('L1',this)">L1</button>
+            <button class="flt" onclick="filterTable('AI',this)">AI/Cloud</button>
+            <button class="flt" onclick="filterTable('DEX',this)">DEX/POW</button>
+          </div>
+        </div>
+        <table class="ct">
+          <thead>
+            <tr>
+              <th>#</th><th>Asset</th><th>Price</th>
+              <th>1H %</th><th>24H %</th><th>7D %</th>
+              <th>Market Cap</th><th>Volume 24H</th>
+              <th>Cycle</th><th>Signal</th><th>7D Chart</th>
+            </tr>
+          </thead>
+          <tbody id="coin-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- RIGHT COL -->
+      <div class="right-col">
+        <div class="dom-card">
+          <div class="card-hd">🔵 Market Dominance</div>
+          <div class="dom-ring-wrap">
+            <svg viewBox="0 0 160 160" width="160" height="160">
+              <circle cx="80" cy="80" r="65" fill="none" stroke="#112240" stroke-width="14"/>
+              <circle cx="80" cy="80" r="65" fill="none" stroke="#00d2ff" stroke-width="14" stroke-dasharray="253 408" stroke-linecap="round" id="ring-btc"/>
+              <circle cx="80" cy="80" r="65" fill="none" stroke="#b060ff" stroke-width="14" stroke-dasharray="57 408" stroke-dashoffset="-253" stroke-linecap="round"/>
+              <circle cx="80" cy="80" r="65" fill="none" stroke="#00ff9d" stroke-width="14" stroke-dasharray="98 408" stroke-dashoffset="-310" stroke-linecap="round"/>
+            </svg>
+            <div class="dom-ring-ctr">
+              <div class="dom-pct" id="ring-btc-pct">—</div>
+              <div class="dom-sub">BTC DOM</div>
+            </div>
+          </div>
+          <div class="dom-legs">
+            <div class="dom-leg"><div class="dom-dot" style="background:var(--blue)"></div><span class="dom-nm">Bitcoin</span><span class="dom-pct2" id="dl-btc">—</span><span class="dom-chg2 dn" id="dl-btc-chg">—</span></div>
+            <div class="dom-leg"><div class="dom-dot" style="background:var(--purple)"></div><span class="dom-nm">Ethereum</span><span class="dom-pct2" id="dl-eth">—</span><span class="dom-chg2 dn">▼0.2%</span></div>
+            <div class="dom-leg"><div class="dom-dot" style="background:var(--green)"></div><span class="dom-nm">Others</span><span class="dom-pct2" id="dl-oth">—</span><span class="dom-chg2 up">▲0.5%</span></div>
+          </div>
+          <div class="dom-sig-box" id="dom-sig"></div>
+        </div>
+
+        <div class="alerts-card">
+          <div class="card-hd" style="display:flex;align-items:center;justify-content:space-between">
+            ⚡ Live Alerts
+            <button onclick="document.getElementById('alert-modal').classList.add('show')" style="background:var(--blue);border:none;color:#000;padding:2px 9px;border-radius:5px;font-size:0.62rem;cursor:pointer;font-family:var(--font);font-weight:800">+ Add</button>
+          </div>
+          <div id="alerts-list"></div>
+          <button class="add-alert-btn" onclick="document.getElementById('alert-modal').classList.add('show')">+ Set custom alert</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MONEY FLOW -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:0.6rem;font-weight:800;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">💰 Inter-Market Money Flow</div>
+      <div class="flow-grid">
+        <div class="flow-card"><div class="fc-hdr"><div class="fc-asset">🟡 Gold (XAU)</div><div class="fc-ico">🏅</div></div><div class="fc-bar"><div class="fc-fill fc-in" style="width:72%"></div></div><div class="fc-stats"><span class="up">+72% inflow</span><span class="dn">-28%</span></div><div class="fc-desc">Safe haven demand ↑. Risk-off signal.</div><div class="fc-sig in">INFLOW</div></div>
+        <div class="flow-card"><div class="fc-hdr"><div class="fc-asset">⬜ Silver (XAG)</div><div class="fc-ico">🥈</div></div><div class="fc-bar"><div class="fc-fill fc-in" style="width:45%"></div></div><div class="fc-stats"><span class="up">+45%</span><span class="dn">-55%</span></div><div class="fc-desc">Moderate inflows. Industrial demand.</div><div class="fc-sig mx">MIXED</div></div>
+        <div class="flow-card"><div class="fc-hdr"><div class="fc-asset">₿ Bitcoin</div><div class="fc-ico">🔶</div></div><div class="fc-bar"><div class="fc-fill fc-out" style="width:60%"></div></div><div class="fc-stats"><span class="dn">-60%</span><span class="up">+40%</span></div><div class="fc-desc">Net outflow to gold/USD. Holding POC.</div><div class="fc-sig out">OUTFLOW</div></div>
+        <div class="flow-card"><div class="fc-hdr"><div class="fc-asset">🌐 Your 9 Alts</div><div class="fc-ico">📊</div></div><div class="fc-bar"><div class="fc-fill fc-out" style="width:78%"></div></div><div class="fc-stats"><span class="dn">-78%</span><span class="up">+22%</span></div><div class="fc-desc">Heavy outflow. Altseason 34/100.</div><div class="fc-sig out">HEAVY OUT</div></div>
+        <div class="flow-card"><div class="fc-hdr"><div class="fc-asset">🧬 AI Tokens</div><div class="fc-ico">🤖</div></div><div class="fc-bar"><div class="fc-fill fc-in" style="width:55%"></div></div><div class="fc-stats"><span class="up">+55%</span><span class="dn">-45%</span></div><div class="fc-desc">AI narrative holding. AKT ORAI CGPT.</div><div class="fc-sig in">INFLOW</div></div>
+      </div>
+    </div>
+
+    <!-- VOL PROFILE -->
+    <div class="vp-card">
+      <div class="vp-hdr">
+        <div class="vp-title">📈 BTC Volume Profile (VPVR) — Key Levels</div>
+        <div class="vp-legend">
+          <div class="vpl"><div class="vpld" style="background:var(--gold)"></div>POC</div>
+          <div class="vpl"><div class="vpld" style="background:var(--blue)"></div>HVN</div>
+          <div class="vpl"><div class="vpld" style="background:rgba(0,210,255,0.2)"></div>LVN</div>
+          <div class="vpl"><div class="vpld" style="background:var(--green)"></div>Value Area</div>
+        </div>
+      </div>
+      <div class="vp-body" id="vp-body"></div>
+      <div class="vp-stats">
+        <div class="vp-stat"><div class="vp-stat-lbl">POC — Point of Control</div><div class="vp-stat-val" style="color:var(--gold)">$65,200</div><div class="vp-stat-desc">Highest volume price. Strongest S/R level. Price magnet — expect bounce or consolidation.</div></div>
+        <div class="vp-stat"><div class="vp-stat-lbl">Value Area (70% vol)</div><div class="vp-stat-val" style="color:var(--green)">$63,400 — $67,800</div><div class="vp-stat-desc">VAH $67,800 = resistance. VAL $63,400 = support. 70% of all BTC volume traded here.</div></div>
+        <div class="vp-stat"><div class="vp-stat-lbl">LVN — Fast Move Zones</div><div class="vp-stat-val" style="color:var(--red)">$61K & $69K</div><div class="vp-stat-desc">Low volume = fast price moves. Set tight stops here. Don't fight momentum in LVN zones.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STRATEGIES VIEW -->
+  <div id="view-strategies" style="display:none">
+    <div style="font-size:0.6rem;font-weight:800;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px">🎯 Active Strategies — From Your Bot + YouTube Analysis</div>
+    <div class="strat-grid">
+      <div class="strat-card"><div class="strat-title">🔵 BTC Dominance <span class="strat-badge">ACTIVE</span></div><div class="strat-desc">Capital rotation signal. Key levels: 40/50/55/60/65%. Drives when to hold BTC vs alts.</div><div class="rule g">✅ BTC.D &gt;60% → Bitcoin season. Hold BTC. Avoid alts.</div><div class="rule g">✅ BTC.D 55–60% → Accumulate NEAR, TON, SUI (large L1s)</div><div class="rule w">⚠️ BTC.D 45–55% → Rotate into SEI, KAS, RUNE, FLUX</div><div class="rule r">🔴 BTC.D &lt;45% → Full altseason. AKT, ORAI, CGPT</div><div class="rule r">🔴 BTC.D falling + BTC falling → Bear market. Go stables.</div><div class="rule g">✅ BTC.D rising + BTC rising → Max BTC exposure now</div></div>
+      <div class="strat-card"><div class="strat-title">📈 Volume Profile (VPVR) <span class="strat-badge">ACTIVE</span></div><div class="strat-desc">Maps volume at price. POC = strongest level. P/b/D/B shapes reveal market intent. Per YouTube analysis.</div><div class="rule g">✅ Price at POC → High-conviction entry. Bounce or consolidation.</div><div class="rule g">✅ Price at VAL → Support. Long if RSI &lt;40 confirms.</div><div class="rule r">🔴 Price at VAH → Resistance. Watch for rejection.</div><div class="rule w">⚠️ Price in LVN → Fast move expected. Tight stops.</div><div class="rule g">✅ P-Shape = bullish bias. b-Shape = bearish bias.</div><div class="rule b">📌 D-Shape = balanced range. Fade VAH/VAL extremes.</div></div>
+      <div class="strat-card"><div class="strat-title">💰 Money Flow <span class="strat-badge">ACTIVE</span></div><div class="strat-desc">Gold → Silver → BTC → Alts rotation. Follow institutional capital. Fed policy drives flows.</div><div class="rule r">🔴 Gold inflow ↑ → Risk-off. Reduce all crypto exposure.</div><div class="rule r">🔴 Gold + Silver both ↑ → Macro fear. Go stables.</div><div class="rule g">✅ Gold ↓ + BTC ↑ → Risk-on. Accumulate BTC + SEI/SUI.</div><div class="rule g">✅ BTC ↑ + Alts outperforming → Full altseason all 10 coins.</div><div class="rule w">⚠️ Fed hawkish → Stay in gold. Wait for rate pivot.</div><div class="rule b">📌 AI tokens (AKT/NEAR/ORAI/CGPT) hold better in risk-off.</div></div>
+      <div class="strat-card"><div class="strat-title">😨 Fear & Greed + Wall St Cycle <span class="strat-badge">ACTIVE</span></div><div class="strat-desc">Your bot detects 15 Wall Street cycle phases per coin using RSI + MA + momentum. Contrarian signals.</div><div class="rule g">✅ 0–20 Extreme Fear → Bot: STRONG BUY. DCA all 10 coins.</div><div class="rule g">✅ 20–40 Fear → ACCUMULATE. Capitulation/Depression phases.</div><div class="rule w">⚠️ 40–60 Neutral → HOLD. Wait for breakout direction.</div><div class="rule r">🔴 60–80 Greed → REDUCE. Take partial profits on alts.</div><div class="rule r">🔴 80–100 Extreme Greed → MAJOR TOP. Sell 50%+.</div><div class="rule b">📌 Current: 19 — Extreme Fear = Historically best buy zone</div></div>
+      <div class="strat-card"><div class="strat-title">🐋 Whale Monitor <span class="strat-badge">ACTIVE</span></div><div class="strat-desc">Your bot checks volume every 30 mins. 2x avg = whale alert. 5x = manipulation. $500K min threshold.</div><div class="rule g">✅ Vol 2x + price ↑ → Whale buying. DCA on next pullback.</div><div class="rule r">🔴 Vol 2x + price ↓ → Whale selling. DO NOT buy dip yet.</div><div class="rule w">⚠️ Vol 2x + price flat → Silent accumulation. Big move coming.</div><div class="rule r">🔴 Vol 5x+ → Extreme. Possible pump & dump. No FOMO.</div><div class="rule r">🔴 Vol collapse -50% → No liquidity. Avoid trading now.</div><div class="rule b">📌 Alerts: SEI SUI RUNE KAS AKT FLUX NEAR ORAI TON CGPT</div></div>
+      <div class="strat-card"><div class="strat-title">🔄 Capital Rotation Cycle <span class="strat-badge">ACTIVE</span></div><div class="strat-desc">Bull markets rotate in 4 phases. Your 10 coins span all phases. Know where you are in the cycle.</div><div class="rule b">📍 Phase 1: BTC rallies. Alts bleed vs BTC. (We are here)</div><div class="rule b">📍 Phase 2: TON, NEAR, SUI follow BTC. Large L1s wake up.</div><div class="rule b">📍 Phase 3: SEI, KAS, RUNE, FLUX explode. DEX/POW rotation.</div><div class="rule b">📍 Phase 4: AKT, ORAI, CGPT parabolic (AI narrative peak)</div><div class="rule w">⚠️ Phase 1 now. BTC Dom = 62%. Stack BTC/TON/NEAR first.</div><div class="rule g">✅ Phase 2 trigger: ETH/BTC ratio recovery + TON/SUI breakout</div></div>
+    </div>
+  </div>
+
+  <!-- MACRO VIEW -->
+  <div id="view-macro" style="display:none">
+    <div style="font-size:0.6rem;font-weight:800;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px">🌍 Macro Calendar — Real Dates From Your Bot</div>
+    <div class="macro-grid">
+      <div class="macro-card"><div class="card-hd">🏦 FOMC / Fed Events 2026</div><div id="fomc-list"></div></div>
+      <div class="macro-card"><div class="card-hd">📊 CPI & Economic Data 2026</div><div id="cpi-list"></div></div>
+    </div>
+  </div>
+
+  <!-- PORTFOLIO VIEW -->
+  <div id="view-portfolio" style="display:none">
+    <div style="font-size:0.6rem;font-weight:800;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px">📈 Portfolio & DCA Log — From Your Bot</div>
+    <div class="port-grid">
+      <div class="port-card">
+        <div class="card-hd" style="display:flex;align-items:center;justify-content:space-between">
+          My DCA Positions
+          <button onclick="document.getElementById('dca-modal').classList.add('show')" style="background:var(--blue);border:none;color:#000;padding:2px 9px;border-radius:5px;font-size:0.62rem;cursor:pointer;font-family:var(--font);font-weight:800">+ Log Buy</button>
+        </div>
+        <div id="port-list"></div>
+        <div class="port-total" id="port-total"></div>
+      </div>
+      <div class="port-card">
+        <div class="card-hd">🎯 Price Targets & All Alerts</div>
+        <div id="targets-view"></div>
+        <div style="margin-top:16px">
+          <div class="card-hd" style="display:flex;align-items:center;justify-content:space-between">
+            All Alerts
+            <button onclick="document.getElementById('alert-modal').classList.add('show')" style="background:var(--blue);border:none;color:#000;padding:2px 9px;border-radius:5px;font-size:0.62rem;cursor:pointer;font-family:var(--font);font-weight:800">+ Add</button>
+          </div>
+          <div id="all-alerts-view"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- AI AGENT -->
+<div class="ai-agent">
+  <div class="ai-chat-box" id="ai-chat-box">
+    <div class="ai-chat-hdr">
+      <div class="ai-avatar">🤖</div>
+      <div><div class="ai-name">CIPHER AI Agent</div><div class="ai-status">● Online — Groq Llama 3.3 70B</div></div>
+      <button class="ai-close-btn" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="ai-quick-q">
+      <div class="qq" onclick="askQ(this)">Best coin now?</div>
+      <div class="qq" onclick="askQ(this)">Analyze SEI</div>
+      <div class="qq" onclick="askQ(this)">BTC dominance?</div>
+      <div class="qq" onclick="askQ(this)">DCA zones NEAR</div>
+      <div class="qq" onclick="askQ(this)">Whale alert?</div>
+      <div class="qq" onclick="askQ(this)">Altseason?</div>
+    </div>
+    <div class="ai-messages" id="ai-msgs"></div>
+    <div class="ai-input-row">
+      <input class="ai-input" id="ai-input" placeholder="Ask about your 10 coins..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="ai-send-btn" id="ai-send-btn" onclick="sendMsg()">Send ↑</button>
+    </div>
+  </div>
+  <button class="ai-toggle-btn" onclick="toggleChat()">
+    🤖
+    <div class="ai-notif"></div>
+  </button>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// COIN DATA — Exact from bot.py + ChainGPT
+// ══════════════════════════════════════════════════════════════════
+const COINS = {
+  'sei-network':      { sym:'SEI',  name:'Sei',       sector:'L1',    col:'#4a9eff', bg:'#0a1e3a', img:'https://assets.coingecko.com/coins/images/28205/small/Sei_Logo_-_Transparent.png' },
+  'sui':              { sym:'SUI',  name:'Sui',        sector:'L1',    col:'#4da2ff', bg:'#0a1a3a', img:'https://assets.coingecko.com/coins/images/26375/small/sui_asset.jpeg' },
+  'thorchain':        { sym:'RUNE', name:'THORchain',  sector:'DEX',   col:'#00ff9d', bg:'#001a12', img:'https://assets.coingecko.com/coins/images/6595/small/Rune200x200.png' },
+  'kaspa':            { sym:'KAS',  name:'Kaspa',      sector:'POW',   col:'#70ff9d', bg:'#0a1e12', img:'https://assets.coingecko.com/coins/images/25751/small/kaspa-icon-exchanges.png' },
+  'akash-network':    { sym:'AKT',  name:'Akash',      sector:'AI',    col:'#ff4060', bg:'#1e080a', img:'https://assets.coingecko.com/coins/images/12785/small/akash-logo.png' },
+  'zelcash':          { sym:'FLUX', name:'Flux',       sector:'Cloud', col:'#00d2ff', bg:'#001a1e', img:'https://assets.coingecko.com/coins/images/5372/small/flux.png' },
+  'near':             { sym:'NEAR', name:'Near',       sector:'L1',    col:'#b060ff', bg:'#120a1e', img:'https://assets.coingecko.com/coins/images/10365/small/near.jpg' },
+  'oraichain-token':  { sym:'ORAI', name:'Oraichain',  sector:'AI',    col:'#ff9000', bg:'#1e1000', img:'https://assets.coingecko.com/coins/images/12931/small/orai.png' },
+  'the-open-network': { sym:'TON',  name:'Toncoin',    sector:'L1',    col:'#0098ea', bg:'#00101e', img:'https://assets.coingecko.com/coins/images/17980/small/ton_symbol.png' },
+  'chaingpt':         { sym:'CGPT', name:'ChainGPT',   sector:'AI',    col:'#a078ff', bg:'#10081e', img:'https://assets.coingecko.com/coins/images/29306/small/200x200.png' },
+};
+
+const COIN_INFO = {
+  'sei-network':      { founders:'Jay Jog & Jayendra Jog (2022)', twitter:'@SeiNetwork', tw:'~420K', reddit:'r/SeiNetwork', discord:'discord.gg/sei', github:'github.com/sei-protocol', desc:'High-perf parallelized EVM L1. DeFi-focused chain with DragonSwap DEX.', max_supply:'10B SEI', launch:'2023', adoption:'DragonSwap DEX, 40+ dApps, EVM+CosmWasm', news:['EVM upgrade live Q1 2025','Pyth Network oracle partnership','DragonSwap TVL $100M+'], events:[{date:'2025-Q2',event:'Sei v3 upgrade — full EVM parallelization'},{date:'2025-Q3',event:'Major DeFi protocol launch on Sei'}] },
+  'sui':              { founders:'Evan Cheng & ex-Meta Diem team (2021)', twitter:'@SuiNetwork', tw:'~1.2M', reddit:'r/SuiNetwork', discord:'discord.gg/sui', github:'github.com/MystenLabs', desc:'Move-based L1 with object model. Backed by a16z. Sub-second finality.', max_supply:'10B SUI', launch:'2023', adoption:'Cetus DEX, Scallop lending, 200+ projects', news:['Grayscale SUI Trust launched','Mysten Labs $300M Series B','ATH broken early 2025'], events:[{date:'2025-Q2',event:'SuiNS domain system v2 launch'},{date:'2025-Q3',event:'Institutional custody integration'}] },
+  'thorchain':        { founders:'Anonymous team, Chad Barraford (2018)', twitter:'@THORChain', tw:'~230K', reddit:'r/THORChain', discord:'discord.gg/thorchain', github:'github.com/thorchain', desc:'Cross-chain DEX. RUNE bonds liquidity. Native BTC/ETH swaps without bridges.', max_supply:'500M RUNE', launch:'2019', adoption:'$600M TVL, 10+ chains natively connected', news:['THORFi lending re-enabled','Cross-chain volume ATH Feb 2025','MAYA Protocol growing'], events:[{date:'2025-Q2',event:'THORFi lending full relaunch'},{date:'2025-Q3',event:'New chain integration'}] },
+  'kaspa':            { founders:'Yonatan Sompolinsky, Harvard (2021)', twitter:'@KaspaCurrency', tw:'~180K', reddit:'r/Kaspa', discord:'discord.gg/kaspa', github:'github.com/kaspanet', desc:'PoW blockDAG. Fastest PoW chain. Fair launch, no VCs, no premine.', max_supply:'28.7B KAS', launch:'2021', adoption:'KRC-20 token standard, Bitmain ASICs, Coinbase listed', news:['Listed on Coinbase','KRC-20 token standard live','New ASIC miners by Bitmain'], events:[{date:'2025-Q2',event:'Crescendo upgrade — smart contracts on Kaspa'},{date:'2025-Q4',event:'Full smart contract ecosystem launch'}] },
+  'akash-network':    { founders:'Greg Osuri & Adam Bozanich (2018)', twitter:'@akashnet_', tw:'~190K', reddit:'r/akashnetwork', discord:'discord.akash.network', github:'github.com/akash-network', desc:'Decentralized GPU/CPU marketplace for AI workloads. Cloud computing on-chain.', max_supply:'388.5M AKT', launch:'2020', adoption:'AI startups, NVIDIA partnership, GPU compute network', news:['NVIDIA partnership announced','Akash Chat AI launched','GPU utilization surging with AI demand'], events:[{date:'2025-Q2',event:'Akash GPU marketplace v2 — H100 support'},{date:'2025-Q3',event:'Enterprise AI compute partnerships'}] },
+  'zelcash':          { founders:'Daniel Keller & Tadeas Kmenta (2018)', twitter:'@RunOnFlux', tw:'~110K', reddit:'r/RunOnFlux', discord:'discord.gg/flux', github:'github.com/RunOnFlux', desc:'Decentralized cloud infrastructure. 4000+ global nodes. Web3 computing.', max_supply:'440M FLUX', launch:'2018', adoption:'FluxEdge AI compute, Zelcore wallet, parallel on 10+ chains', news:['FluxEdge AI platform launched','Parallel assets on 10+ chains','Zelcore major update'], events:[{date:'2025-Q2',event:'FluxEdge v2 — enterprise GPU marketplace'},{date:'2025-Q3',event:'Titan network expansion'}] },
+  'near':             { founders:'Illia Polosukhin & Alexander Skidanov (2018)', twitter:'@NEARProtocol', tw:'~830K', reddit:'r/nearprotocol', discord:'discord.gg/near', github:'github.com/near', desc:'Sharded PoS L1. AI-chain focus. Human-readable accounts. Chain Abstraction pioneer.', max_supply:'Inflationary', launch:'2020', adoption:'NEAR AI framework, BOS, Ref Finance DEX', news:['NEAR AI agent framework live','Nightshade v2 sharding launched','Illia joins AI safety board'], events:[{date:'2025-Q2',event:'NEAR AI Agent protocol mainnet'},{date:'2025-Q3',event:'Chain Abstraction full rollout'}] },
+  'oraichain-token':  { founders:'Dr. Chung Dao (Vietnam, 2019)', twitter:'@oraichain', tw:'~95K', reddit:'r/oraichain', discord:'discord.gg/oraichain', github:'github.com/oraichain', desc:'AI oracle L1. Connects AI/ML models to smart contracts. First AI-powered blockchain.', max_supply:'19.8M ORAI', launch:'2021', adoption:'OraiDEX, ML oracles, Injective partnership, CosmWasm AI', news:['Staking rewards increased','CosmWasm AI contracts live','Injective AI oracle partnership'], events:[{date:'2025-Q2',event:'ORAI AI model marketplace launch'},{date:'2025-Q3',event:'Cross-chain AI oracle expansion'}] },
+  'the-open-network': { founders:'Telegram / Durov brothers (2018), TON Foundation', twitter:'@ton_blockchain', tw:'~680K', reddit:'r/TONcoin', discord:'discord.gg/ton', github:'github.com/ton-blockchain', desc:'L1 blockchain integrated with Telegram 900M users. Mini-apps ecosystem.', max_supply:'5.1B TON', launch:'2020', adoption:'TON Space, 100M Notcoin users, Telegram Stars payments', news:['Pavel Durov released from France','Telegram Stars expanding to all markets','Mini-apps hit 100M active users'], events:[{date:'2025-Q2',event:'Telegram Stars full payment rollout'},{date:'2025-Q3',event:'TON Space self-custody expansion'}] },
+  'chaingpt':         { founders:'ChainGPT Labs team (2022)', twitter:'@ChainGPT', tw:'~120K', reddit:'r/ChainGPT', discord:'discord.gg/chaingpt', github:'github.com/chaingpt', desc:'AI infrastructure for crypto. Blockchain-native AI: smart contract auditor, NFT generator, trading assistant.', max_supply:'1B CGPT', launch:'2023', adoption:'100K+ users, Binance Launchpad, AI tools suite', news:['AI Smart Contract Auditor v2 launched','Binance Launchpad listing','CGPT staking rewards live'], events:[{date:'2025-Q2',event:'ChainGPT AI v3 — multi-chain support'},{date:'2025-Q3',event:'Enterprise AI audit partnerships'}] },
+};
+
+const MACRO_EVENTS = [
+  {date:'2026-01-28',event:'🏦 FOMC Decision',impact:'H',type:'fomc',crypto:'Rate cut = 🟢 bullish. Hold = 🟡 neutral.'},
+  {date:'2026-03-18',event:'🏦 FOMC + Dot Plot',impact:'H',type:'fomc',crypto:'Dovish dot plot = 🟢 strong alt rally.'},
+  {date:'2026-04-29',event:'🏦 FOMC Decision',impact:'H',type:'fomc',crypto:'Watch jobless claims week before.'},
+  {date:'2026-06-17',event:'🏦 FOMC + Dot Plot',impact:'H',type:'fomc',crypto:'High volatility. Position before 2pm ET.'},
+  {date:'2026-09-16',event:'🏦 FOMC + Dot Plot',impact:'H',type:'fomc',crypto:'Most market-moving Fed meeting of year.'},
+  {date:'2026-12-09',event:'🏦 FOMC Year-End',impact:'H',type:'fomc',crypto:'Sets entire 2027 tone. Santa rally or dump.'},
+  {date:'2026-01-15',event:'📊 CPI January',impact:'H',type:'cpi',crypto:'Above 3% = 🔴 no cuts. Below 2.5% = 🟢 bullish.'},
+  {date:'2026-02-12',event:'📊 CPI February',impact:'H',type:'cpi',crypto:'Watch shelter + energy components.'},
+  {date:'2026-03-12',event:'📊 CPI March',impact:'H',type:'cpi',crypto:'Hot CPI before FOMC = 🔴 risk-off.'},
+  {date:'2026-04-14',event:'📊 CPI April',impact:'H',type:'cpi',crypto:'Soft = alt season catalyst.'},
+  {date:'2026-04-15',event:'💰 US Tax Day',impact:'M',type:'cpi',crypto:'🔴 Crypto holders sell. Bearish Apr 1–15.'},
+  {date:'2026-03-31',event:'💼 PCE Inflation',impact:'H',type:'cpi',crypto:'PCE below 2% = 🟢 very bullish. Fed target.'},
+  {date:'2026-06-30',event:'⚠️ Debt Ceiling',impact:'H',type:'cpi',crypto:'Liquidity drain risk = crypto drops.'},
+  {date:'2026-01-30',event:'💼 GDP Q4 2025',impact:'H',type:'cpi',crypto:'Strong GDP + high inflation = stagflation risk.'},
+];
+
+const VP_DATA = [
+  {p:'$71.0K',v:15,t:'lvn'},{p:'$70.0K',v:28,t:'hvn'},
+  {p:'$69.2K',v:8,t:'lvn'},{p:'$68.5K',v:48,t:'hvn'},
+  {p:'$67.8K',v:58,t:'hvn',lbl:'VAH'},{p:'$67.0K',v:65,t:'hvn'},
+  {p:'$66.2K',v:52,t:'hvn'},{p:'$65.8K',v:72,t:'hvn'},
+  {p:'$65.2K',v:100,t:'poc',lbl:'POC'},{p:'$64.6K',v:70,t:'hvn'},
+  {p:'$64.0K',v:60,t:'hvn'},{p:'$63.4K',v:55,t:'hvn',lbl:'VAL'},
+  {p:'$62.5K',v:20,t:'lvn'},{p:'$61.8K',v:9,t:'lvn'},
+  {p:'$61.0K',v:32,t:'hvn'},{p:'$60.0K',v:14,t:'lvn'},
+];
+
+// ══════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════
+let GROQ_KEY = '';
+let liveData = {};
+let portfolio = [];
+let myAlerts = [
+  {type:'fire',ico:'🔴',txt:'<b>BTC Dom 62%:</b> Above 60% — Bitcoin season. Reduce altcoin exposure.',time:'2m ago'},
+  {type:'warn',ico:'⚠️',txt:'<b>F&G 19 — Extreme Fear:</b> Historical DCA zone. Bot signal: STRONG BUY.',time:'5m ago'},
+  {type:'info',ico:'💰',txt:'<b>Gold inflow +72%:</b> Risk-off. Capital leaving crypto toward gold.',time:'12m ago'},
+  {type:'ok',ico:'📈',txt:'<b>BTC Volume Profile:</b> Price near POC $65,200 — strong support.',time:'18m ago'},
+  {type:'warn',ico:'🐋',txt:'<b>KAS Whale Alert:</b> Volume spike 2.3x — silent accumulation pattern.',time:'22m ago'},
+];
+let chatHistory = [];
+let activeFilter = 'all';
+
+// ══════════════════════════════════════════════════════════════════
+// SETUP
+// ══════════════════════════════════════════════════════════════════
+window.onload = () => {
+  const saved = localStorage.getItem('cipher_key_v3');
+  if (saved && saved.startsWith('gsk_')) {
+    GROQ_KEY = saved;
+    document.getElementById('setup-screen').style.display = 'none';
+  }
+  portfolio = JSON.parse(localStorage.getItem('cipher_portfolio_v3') || '[]');
+  myAlerts = JSON.parse(localStorage.getItem('cipher_alerts_v3') || JSON.stringify(myAlerts));
+  buildSetupCoins();
+  buildSelectOptions();
+  buildVP();
+  renderAlerts();
+  initTicker();
+  initDashboard();
+};
+
+function activate() {
+  const v = document.getElementById('setup-key').value.trim();
+  if (!v.startsWith('gsk_')) { document.getElementById('setup-err').style.display='block'; return; }
+  GROQ_KEY = v;
+  localStorage.setItem('cipher_key_v3', v);
+  document.getElementById('setup-screen').style.display = 'none';
+  initDashboard();
+}
+
+function buildSetupCoins() {
+  const el = document.getElementById('setup-coins-row');
+  el.innerHTML = Object.values(COINS).map(c =>
+    `<div class="sc-pill"><img src="${c.img}" onerror="this.style.display='none'"> ${c.sym}</div>`
+  ).join('');
+}
+
+function buildSelectOptions() {
+  const assetSel = document.getElementById('m-asset');
+  const dcaSel = document.getElementById('dca-coin-sel');
+  Object.entries(COINS).forEach(([id, c]) => {
+    assetSel.innerHTML += `<option>${c.sym}</option>`;
+    dcaSel.innerHTML += `<option value="${id}">${c.sym} — ${c.name}</option>`;
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// FORMATTERS
+// ══════════════════════════════════════════════════════════════════
+const fmtP = p => {
+  if (!p) return '—';
+  if (p >= 10000) return '$' + p.toLocaleString('en',{maximumFractionDigits:0});
+  if (p >= 100) return '$' + p.toFixed(2);
+  if (p >= 1) return '$' + p.toFixed(4);
+  if (p >= 0.01) return '$' + p.toFixed(5);
+  return '$' + p.toFixed(8);
+};
+const fmtN = n => {
+  if (!n) return '—';
+  if (n >= 1e12) return '$'+(n/1e12).toFixed(2)+'T';
+  if (n >= 1e9) return '$'+(n/1e9).toFixed(2)+'B';
+  if (n >= 1e6) return '$'+(n/1e6).toFixed(2)+'M';
+  return '$'+n.toFixed(0);
+};
+const fmtChg = (n) => {
+  if (n == null) return '<span style="color:var(--text2)">—</span>';
+  const cl = n >= 0 ? 'chg-up' : 'chg-dn';
+  return `<span class="${cl}">${n>=0?'▲':'▼'}${Math.abs(n).toFixed(2)}%</span>`;
+};
+const fmtChgTxt = (n) => n == null ? '—' : `${n>=0?'▲':'▼'}${Math.abs(n).toFixed(2)}%`;
+
+// ══════════════════════════════════════════════════════════════════
+// SIGNAL / CYCLE
+// ══════════════════════════════════════════════════════════════════
+function getSignal(h24, h7) {
+  if (h7 > 12 && h24 > 2) return ['b','BUY'];
+  if (h7 < -12 && h24 < -2) return ['s','SELL'];
+  if (h7 > 5 || h24 > 1) return ['w','WATCH'];
+  return ['n','HOLD'];
+}
+
+function getCycle(h24, h7) {
+  if (h7 > 20) return ['🚀','THRILL','#00302010','var(--green)'];
+  if (h7 > 10) return ['😊','BELIEF','#002a1a08','var(--green)'];
+  if (h7 > 3) return ['🙂','OPTIMISM','#002a1a05','var(--green)'];
+  if (h24 < -6 && h7 < -15) return ['💀','CAPITULATION','#30000810','var(--red)'];
+  if (h7 < -12) return ['😱','PANIC','#30000808','var(--red)'];
+  if (h7 < -6) return ['😡','ANGER','#30000806','var(--red)'];
+  if (h24 > 0 && h7 >= 0) return ['🌅','HOPE','#302000','var(--gold)'];
+  return ['😐','NEUTRAL','#08090f','var(--text2)'];
+}
+
+function marketScore(fgVal) {
+  let s = 50 + (fgVal - 50) * 0.5;
+  s = Math.min(100, Math.max(0, Math.round(s)));
+  if (s >= 65) return [s, '🟢 BULLISH'];
+  if (s <= 35) return [s, '🔴 BEARISH'];
+  return [s, '🟡 NEUTRAL'];
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SPARKLINE
+// ══════════════════════════════════════════════════════════════════
+function sparkline(trend) {
+  let v = 50;
+  return Array.from({length:14},() => {
+    v += (Math.random()-0.5)*14 + trend*0.22;
+    v = Math.max(5,Math.min(95,v));
+    return v;
+  }).map(h => {
+    const hpx = Math.max(3,(h/100)*22);
+    const col = trend >= 0 ? 'var(--green)' : 'var(--red)';
+    return `<div class="sp-b" style="height:${hpx}px;background:${col}"></div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TICKER
+// ══════════════════════════════════════════════════════════════════
+function initTicker() {
+  const items = Object.entries(COINS).map(([id, c]) => {
+    const d = liveData[id] || {};
+    const p = d.current_price || 0;
+    const ch = d.price_change_percentage_24h || 0;
+    return `<div class="tick">
+      <img src="${c.img}" onerror="this.style.display='none'">
+      <span class="tick-sym">${c.sym}</span>
+      <span class="tick-p">${fmtP(p)}</span>
+      <span class="${ch>=0?'up':'dn'}">${ch>=0?'▲':'▼'}${Math.abs(ch).toFixed(2)}%</span>
+    </div>`;
+  }).join('');
+  const t = document.getElementById('ticker-track');
+  t.innerHTML = items + items;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// RENDER TABLE
+// ══════════════════════════════════════════════════════════════════
+const CATS = {L1:['sei-network','sui','near','the-open-network'],AI:['akash-network','oraichain-token','chaingpt'],DEX:['thorchain','kaspa','zelcash']};
+
+function renderTable() {
+  const ids = activeFilter === 'all' ? Object.keys(COINS) : (CATS[activeFilter] || Object.keys(COINS));
+  const tbody = document.getElementById('coin-tbody');
+  tbody.innerHTML = ids.map((id, i) => {
+    const c = COINS[id]; const d = liveData[id] || {};
+    const price = d.current_price || 0;
+    const h1 = d.price_change_percentage_1h_in_currency || 0;
+    const h24 = d.price_change_percentage_24h || 0;
+    const h7 = d.price_change_percentage_7d_in_currency || 0;
+    const mc = d.market_cap || 0;
+    const vol = d.total_volume || 0;
+    const [sc] = getSignal(h24,h7), [slbl] = [getSignal(h24,h7)[0],getSignal(h24,h7)[1]];
+    const sigCls = getSignal(h24,h7)[0], sigLbl = getSignal(h24,h7)[1];
+    const [cEmo,cLbl,cBg,cClr] = getCycle(h24,h7);
+    const secColors = {L1:'rgba(0,210,255,0.12)',AI:'rgba(176,96,255,0.12)',Cloud:'rgba(0,210,255,0.12)',DEX:'rgba(0,255,157,0.12)',POW:'rgba(255,183,0,0.12)'};
+    const secTxt = {L1:'var(--blue)',AI:'var(--purple)',Cloud:'var(--cyan)',DEX:'var(--green)',POW:'var(--gold)'};
+    return `<tr onclick="openPanel('${id}')">
+      <td>${i+1}</td>
+      <td><div class="coin-cell">
+        <div class="coin-img-wrap" style="background:${c.bg}">
+          <img src="${c.img}" alt="${c.sym}" onerror="this.parentElement.innerHTML='<div style=font-size:16px>${c.sym.charAt(0)}</div>'">
+        </div>
+        <div>
+          <div class="coin-name">${c.name}</div>
+          <div style="display:flex;align-items:center;gap:4px">
+            <span class="coin-sym">${c.sym}</span>
+            <span class="coin-sec" style="background:${secColors[c.sector]||'rgba(0,210,255,0.1)'};color:${secTxt[c.sector]||'var(--blue)'}">${c.sector}</span>
+          </div>
+        </div>
+      </div></td>
+      <td><b>${fmtP(price)}</b></td>
+      <td>${fmtChg(h1)}</td>
+      <td>${fmtChg(h24)}</td>
+      <td>${fmtChg(h7)}</td>
+      <td>${fmtN(mc)}</td>
+      <td>${fmtN(vol)}</td>
+      <td><span class="cycle-tag" style="background:${cBg};color:${cClr}">${cEmo} ${cLbl}</span></td>
+      <td><span class="badge-signal ${sigCls}">${sigLbl}</span></td>
+      <td><div class="spark-line">${sparkline(h7)}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterTable(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.flt').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderTable();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// COIN DETAIL PANEL
+// ══════════════════════════════════════════════════════════════════
+function openPanel(id) {
+  const c = COINS[id];
+  const info = COIN_INFO[id] || {};
+  const d = liveData[id] || {};
+  const price = d.current_price || 0;
+  const h24 = d.price_change_percentage_24h || 0;
+  const h7 = d.price_change_percentage_7d_in_currency || 0;
+  const mc = d.market_cap || 0;
+  const vol = d.total_volume || 0;
+  const [sigCls, sigLbl] = getSignal(h24, h7);
+  const [cEmo, cLbl] = getCycle(h24, h7);
+
+  // DCA zones (simplified from bot.py)
+  const sup = price * 0.92;
+  const z1 = sup * 0.98, z2 = sup, z3 = (sup + price * 0.97) / 2, tp = price * 1.15;
+
+  document.getElementById('cdp-content').innerHTML = `
+    <div class="cdp-header">
+      <img class="cdp-img" src="${c.img}" onerror="this.style.display='none'">
+      <div>
+        <div class="cdp-name">${c.name}</div>
+        <div class="cdp-sym">${c.sym} · ${c.sector}</div>
+        <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="badge-signal ${sigCls}">${sigLbl}</span>
+          <span style="font-size:0.65rem;background:rgba(0,210,255,0.08);border:1px solid rgba(0,210,255,0.15);color:var(--blue);padding:2px 7px;border-radius:4px">${cEmo} ${cLbl}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cdp-section">
+      <div class="cdp-sec-title">💲 Live Price Data</div>
+      <div class="cdp-row"><span class="cdp-k">Price</span><span class="cdp-v">${fmtP(price)}</span></div>
+      <div class="cdp-row"><span class="cdp-k">24h Change</span><span class="cdp-v">${fmtChgTxt(h24)}</span></div>
+      <div class="cdp-row"><span class="cdp-k">7d Change</span><span class="cdp-v">${fmtChgTxt(h7)}</span></div>
+      <div class="cdp-row"><span class="cdp-k">Market Cap</span><span class="cdp-v">${fmtN(mc)}</span></div>
+      <div class="cdp-row"><span class="cdp-k">Volume 24h</span><span class="cdp-v">${fmtN(vol)}</span></div>
+    </div>
+
+    <div class="cdp-section">
+      <div class="cdp-sec-title">📌 About</div>
+      <div style="font-size:0.72rem;color:var(--text2);line-height:1.6">${info.desc||'—'}</div>
+    </div>
+
+    <div class="cdp-section">
+      <div class="cdp-sec-title">🪙 Supply & Founders</div>
+      <div class="cdp-row"><span class="cdp-k">Founders</span><span class="cdp-v">${info.founders||'—'}</span></div>
+      <div class="cdp-row"><span class="cdp-k">Launch Year</span><span class="cdp-v">${info.launch||'—'}</span></div>
+      <div class="cdp-row"><span class="cdp-k">Max Supply</span><span class="cdp-v">${info.max_supply||'—'}</span></div>
+      <div class="cdp-row"><span class="cdp-k">Adoption</span><span class="cdp-v">${info.adoption||'—'}</span></div>
+    </div>
+
+    <div class="cdp-section">
+      <div class="cdp-sec-title">🌐 Social Links</div>
+      <div class="social-links">
+        <a class="social-link" href="https://twitter.com/${(info.twitter||'').replace('@','')}" target="_blank">🐦 ${info.twitter||'—'} (${info.tw||'—'})</a>
+        <a class="social-link" href="https://reddit.com/${info.reddit||''}" target="_blank">🔴 ${info.reddit||'—'}</a>
+        <a class="social-link" href="https://${info.discord||''}" target="_blank">💬 Discord</a>
+        <a class="social-link" href="https://${info.github||''}" target="_blank">💻 GitHub</a>
+        <a class="social-link" href="https://www.tradingview.com/chart/?symbol=BINANCE:${c.sym}USDT" target="_blank">📈 TradingView</a>
+        <a class="social-link" href="https://www.coingecko.com/en/coins/${id}" target="_blank">🦎 CoinGecko</a>
+      </div>
+    </div>
+
+    <div class="cdp-section">
+      <div class="cdp-sec-title">🔧 Technical Analysis (Simplified)</div>
+      <div class="ta-grid">
+        <div class="ta-box"><div class="ta-lbl">Signal</div><div class="ta-val" style="color:${sigCls==='b'?'var(--green)':sigCls==='s'?'var(--red)':'var(--gold)'}">${sigLbl}</div></div>
+        <div class="ta-box"><div class="ta-lbl">Cycle Phase</div><div class="ta-val">${cEmo} ${cLbl}</div></div>
+        <div class="ta-box"><div class="ta-lbl">7d Momentum</div><div class="ta-val" style="color:${h7>=0?'var(--green)':'var(--red)'}">${fmtChgTxt(h7)}</div></div>
+        <div class="ta-box"><div class="ta-lbl">Vol/MCap</div><div class="ta-val">${mc?((vol/mc)*100).toFixed(2)+'%':'—'}</div></div>
+      </div>
+    </div>
+
+    <div class="cdp-section">
+      <div class="cdp-sec-title">🎯 DCA Buy Zones (From Bot)</div>
+      <div class="dca-zones">
+        <div class="dca-zone z1"><span style="color:var(--green);font-weight:700">Zone 1 — BEST</span><span style="font-family:var(--mono);font-size:0.78rem">${fmtP(z1)}</span></div>
+        <div class="dca-zone z2"><span style="color:var(--green);font-weight:700">Zone 2 — Strong</span><span style="font-family:var(--mono);font-size:0.78rem">${fmtP(z2)}</span></div>
+        <div class="dca-zone z3"><span style="color:var(--gold);font-weight:700">Zone 3 — Moderate</span><span style="font-family:var(--mono);font-size:0.78rem">${fmtP(z3)}</span></div>
+        <div class="dca-zone tp"><span style="color:var(--red);font-weight:700">Take Profit</span><span style="font-family:var(--mono);font-size:0.78rem">${fmtP(tp)}</span></div>
+      </div>
+    </div>
+
+    <div class="cdp-section">
+      <div class="cdp-sec-title">📰 Recent News</div>
+      ${(info.news||[]).map(n=>`<div class="news-item">${n}</div>`).join('')}
+    </div>
+
+    <div class="cdp-section">
+      <div class="cdp-sec-title">📅 Upcoming Events</div>
+      ${(info.events||[]).map(e=>`<div class="event-item"><div class="event-date">${e.date}</div><div>${e.event}</div></div>`).join('')}
+    </div>
+
+    <div style="padding:10px 0;font-size:0.62rem;color:var(--muted);text-align:center">⚠️ Educational only. Not financial advice.</div>
+  `;
+  document.getElementById('coin-panel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('coin-panel').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// VOLUME PROFILE
+// ══════════════════════════════════════════════════════════════════
+function buildVP() {
+  const prices = VP_DATA.map(l => `<div>${l.p}</div>`).join('');
+  const bars = VP_DATA.map(l => {
+    const w = (l.v/100)*100;
+    const clr = l.t==='poc' ? 'rgba(255,183,0,0.75)' : l.t==='lvn' ? 'rgba(0,210,255,0.15)' : l.lbl ? 'rgba(0,255,157,0.3)' : 'rgba(0,210,255,0.42)';
+    const lclr = l.t==='poc' ? 'var(--gold)' : l.lbl==='VAH' ? 'var(--green)' : l.lbl==='VAL' ? 'var(--red)' : 'var(--text2)';
+    return `<div class="vp-row"><div class="vp-bar" style="width:${w}%;background:${clr}"></div><span class="vp-label" style="color:${lclr}">${l.lbl||l.t.toUpperCase()}</span></div>`;
+  }).join('');
+  document.getElementById('vp-body').innerHTML =
+    `<div class="vp-price-axis">${prices}</div><div class="vp-bars">${bars}</div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// DOMINANCE
+// ══════════════════════════════════════════════════════════════════
+function updateDominance(btcDom) {
+  const eth = 13.8, oth = 100-btcDom-eth;
+  document.getElementById('mc-dom').textContent = btcDom.toFixed(1)+'%';
+  document.getElementById('mc-dom-fill').style.width = btcDom+'%';
+  document.getElementById('ring-btc-pct').textContent = btcDom.toFixed(0)+'%';
+  document.getElementById('dl-btc').textContent = btcDom.toFixed(1)+'%';
+  document.getElementById('dl-eth').textContent = eth.toFixed(1)+'%';
+  document.getElementById('dl-oth').textContent = oth.toFixed(1)+'%';
+  document.getElementById('h-dom').textContent = btcDom.toFixed(1)+'%';
+  let sig, col;
+  if (btcDom > 65) { sig='Above 65% — Extreme Bitcoin season. Avoid all alts. BTC only.'; col='var(--blue)'; }
+  else if (btcDom > 60) { sig='Above 60% — Bitcoin season. Your picks: TON, NEAR, SUI (large L1s first).'; col='var(--blue)'; }
+  else if (btcDom > 55) { sig='55–60% — BTC dominant. Start watching SEI, SUI for breakout.'; col='var(--cyan)'; }
+  else if (btcDom > 50) { sig='50–55% — Transitioning. Altseason approaching. Start rotating.'; col='var(--gold)'; }
+  else { sig='Below 50% — Altseason active! All 10 coins: SEI SUI RUNE KAS AKT FLUX NEAR ORAI TON CGPT.'; col='var(--green)'; }
+  document.getElementById('dom-sig').innerHTML = `<b style="color:${col}">Strategy:</b> ${sig}`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ALERTS
+// ══════════════════════════════════════════════════════════════════
+function renderAlerts() {
+  ['alerts-list','all-alerts-view'].forEach(elId => {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const isAll = elId === 'all-alerts-view';
+    el.innerHTML = myAlerts.slice(0, isAll ? 999 : 5).map((a,i) => `
+      <div class="alert-item ${a.type}">
+        <span class="al-ico">${a.ico}</span>
+        <div style="flex:1"><div class="al-txt">${a.txt}</div><div class="al-time">${a.time}</div></div>
+        ${isAll?`<button onclick="removeAlert(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem">×</button>`:''}
+      </div>`).join('');
+  });
+}
+
+function removeAlert(i) {
+  myAlerts.splice(i,1);
+  localStorage.setItem('cipher_alerts_v3', JSON.stringify(myAlerts));
+  renderAlerts();
+}
+
+function saveAlert() {
+  const a = document.getElementById('m-asset').value;
+  const c = document.getElementById('m-cond').value;
+  const v = document.getElementById('m-val').value;
+  const n = document.getElementById('m-note').value;
+  myAlerts.unshift({type:'info',ico:'⚡',txt:`<b>${a}:</b> ${c} ${v||''}${n?' — '+n:''}`,time:'Just now'});
+  localStorage.setItem('cipher_alerts_v3', JSON.stringify(myAlerts));
+  renderAlerts();
+  closeModal('alert-modal');
+  document.getElementById('m-val').value='';
+  document.getElementById('m-note').value='';
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// ══════════════════════════════════════════════════════════════════
+// PORTFOLIO
+// ══════════════════════════════════════════════════════════════════
+function saveDCA() {
+  const id = document.getElementById('dca-coin-sel').value;
+  const amt = parseFloat(document.getElementById('dca-usd').value);
+  const bp = parseFloat(document.getElementById('dca-buy-price').value);
+  if (!amt || !bp || isNaN(amt) || isNaN(bp)) return;
+  portfolio.push({id, amount:amt, price:bp, date:new Date().toISOString().split('T')[0], coins:amt/bp});
+  localStorage.setItem('cipher_portfolio_v3', JSON.stringify(portfolio));
+  closeModal('dca-modal');
+  renderPortfolio();
+}
+
+function renderPortfolio() {
+  const el = document.getElementById('port-list');
+  if (!el) return;
+  if (!portfolio.length) { el.innerHTML='<div style="color:var(--muted);font-size:0.75rem;padding:10px 0">No entries yet. Tap "+ Log Buy" to track your DCA.</div>'; document.getElementById('port-total').innerHTML=''; return; }
+  const groups = {};
+  portfolio.forEach(e => { if(!groups[e.id]) groups[e.id]=[]; groups[e.id].push(e); });
+  let ti=0, tv=0;
+  const rows = Object.entries(groups).map(([id,entries]) => {
+    const c = COINS[id]||{};
+    const inv = entries.reduce((s,e)=>s+e.amount,0);
+    const coins = entries.reduce((s,e)=>s+e.coins,0);
+    const avg = inv/coins;
+    const cur = liveData[id]?.current_price || avg;
+    const val = coins*cur, pnl=val-inv, pct=(pnl/inv)*100;
+    ti+=inv; tv+=val;
+    const col = pnl>=0?'var(--green)':'var(--red)';
+    return `<div class="port-entry">
+      <img class="port-ico" src="${c.img||''}" onerror="this.style.display='none'">
+      <div class="port-sym">${c.sym||id}</div>
+      <div class="port-info">Avg: ${fmtP(avg)}<br>Now: ${fmtP(cur)}</div>
+      <div class="port-pnl" style="color:${col}">${pnl>=0?'+':''}$${pnl.toFixed(2)}<br><span style="font-size:0.62rem">${pct>=0?'+':''}${pct.toFixed(1)}%</span></div>
+    </div>`;
+  }).join('');
+  el.innerHTML = rows;
+  const tot=tv-ti, totpct=(tot/ti)*100;
+  const col=tot>=0?'var(--green)':'var(--red)';
+  document.getElementById('port-total').innerHTML=`Invested: <b>$${ti.toFixed(2)}</b> &nbsp;|&nbsp; Value: <b>$${tv.toFixed(2)}</b> &nbsp;|&nbsp; P&L: <b style="color:${col}">${tot>=0?'+':''}$${tot.toFixed(2)} (${totpct.toFixed(1)}%)</b>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// MACRO
+// ══════════════════════════════════════════════════════════════════
+function renderMacro() {
+  const fomc = document.getElementById('fomc-list');
+  const cpi = document.getElementById('cpi-list');
+  if (!fomc||!cpi) return;
+  const fmt = evts => evts.map(e => `
+    <div class="ev-item">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+        <span class="ev-date">${e.date}</span>
+        <span class="ev-imp ${e.impact}">${e.impact==='H'?'HIGH':'MED'}</span>
+      </div>
+      <div class="ev-name">${e.event}</div>
+      <div class="ev-crypto">${e.crypto}</div>
+    </div>`).join('');
+  fomc.innerHTML = fmt(MACRO_EVENTS.filter(e=>e.type==='fomc'));
+  cpi.innerHTML = fmt(MACRO_EVENTS.filter(e=>e.type==='cpi'));
+}
+
+// ══════════════════════════════════════════════════════════════════
+// VIEWS
+// ══════════════════════════════════════════════════════════════════
+function switchView(v, btn) {
+  document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  ['market','strategies','macro','portfolio'].forEach(id => {
+    const el = document.getElementById('view-'+id);
+    if (el) el.style.display = id===v?'':'none';
+  });
+  if (v==='macro') renderMacro();
+  if (v==='portfolio') renderPortfolio();
+  if (v==='portfolio') renderAlerts();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// API FETCH
+// ══════════════════════════════════════════════════════════════════
+async function fetchPrices() {
+  try {
+    const ids = Object.keys(COINS).join(',') + ',bitcoin';
+    const r = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=20&sparkline=false&price_change_percentage=1h,24h,7d`);
+    if (!r.ok) throw new Error('rate');
+    (await r.json()).forEach(c=>{ liveData[c.id]=c; });
+    return true;
+  } catch { return false; }
+}
+
+async function fetchGlobal() {
+  try { const r=await fetch('https://api.coingecko.com/api/v3/global'); return (await r.json()).data||{}; }
+  catch { return {}; }
+}
+
+async function fetchFG() {
+  try { const r=await fetch('https://api.alternative.me/fng/?limit=1'); return (await r.json()).data[0]; }
+  catch { return {value:'19',value_classification:'Extreme Fear'}; }
+}
+
+async function refreshAll() {
+  await Promise.all([fetchPrices(), fetchGlobal().then(g=>{
+    const dom=g.btc_dominance||62.1, vol=g.total_volume?.usd||0, mc=g.total_market_cap?.usd||0, chg=g.market_cap_change_percentage_24h_usd||0;
+    updateDominance(dom);
+    document.getElementById('h-mc').textContent=fmtN(mc);
+    document.getElementById('h-mc-chg').innerHTML=fmtChg(chg);
+    document.getElementById('h-vol').textContent=fmtN(vol);
+    document.getElementById('mc-tmcap').textContent=fmtN(mc);
+    document.getElementById('mc-tmcap-chg').innerHTML=fmtChg(chg);
+    document.getElementById('mc-bvol').textContent=fmtN(vol);
+  }), fetchFG().then(fg=>{
+    const val=parseInt(fg?.value||19), lbl=fg?.value_classification||'Extreme Fear';
+    const col=val<25?'var(--red)':val<45?'var(--red)':val<55?'var(--gold)':'var(--green)';
+    document.getElementById('mc-fg').textContent=val;
+    document.getElementById('mc-fg').style.color=col;
+    document.getElementById('mc-fg-lbl').textContent=lbl;
+    document.getElementById('mc-fg-fill').style.width=val+'%';
+    document.getElementById('h-fg').textContent=val+' — '+lbl.split(' ').slice(-1)[0];
+    document.getElementById('h-fg').style.color=col;
+    const [score,verdict]=marketScore(val);
+    document.getElementById('mc-score').textContent=score+'/100';
+    document.getElementById('mc-verdict').textContent=verdict;
+  })]);
+  initTicker();
+  renderTable();
+}
+
+async function initDashboard() {
+  await refreshAll();
+  setInterval(refreshAll, 60000);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// AI AGENT CHAT
+// ══════════════════════════════════════════════════════════════════
+function toggleChat() {
+  const box = document.getElementById('ai-chat-box');
+  const isOpen = box.classList.contains('show');
+  box.classList.toggle('show');
+  if (!isOpen && !document.querySelector('.msg')) {
+    addMsg('bot', `Hey! 👋 I'm CIPHER AI, your crypto intelligence agent.\n\nI know all 10 of your coins: SEI, SUI, RUNE, KAS, AKT, FLUX, NEAR, ORAI, TON, CGPT.\n\nAsk me anything — best entry zones, market cycle, BTC dominance strategy, whale signals, or analysis on any coin.`);
+  }
+}
+
+function askQ(el) {
+  document.getElementById('ai-input').value = el.textContent;
+  sendMsg();
+}
+
+function addMsg(role, text) {
+  const msgs = document.getElementById('ai-msgs');
+  const now = new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div><div class="msg-time">${now}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function addTyping() {
+  const msgs = document.getElementById('ai-msgs');
+  const div = document.createElement('div');
+  div.className = 'msg bot'; div.id = 'typing-ind';
+  div.innerHTML = `<div class="msg-bubble"><div class="typing-ind"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-ind');
+  if (t) t.remove();
+}
+
+function buildSystemPrompt() {
+  const prices = Object.entries(COINS).map(([id, c]) => {
+    const d = liveData[id]||{};
+    return `${c.sym}: $${(d.current_price||0).toFixed(4)}, 24h: ${(d.price_change_percentage_24h||0).toFixed(2)}%, 7d: ${(d.price_change_percentage_7d_in_currency||0).toFixed(2)}%`;
+  }).join('\n');
+
+  return `You are CIPHER AI, a professional crypto trading intelligence agent specializing in these 10 coins:
+SEI (L1), SUI (L1), RUNE/THORchain (DEX), KAS/Kaspa (POW), AKT/Akash (AI Cloud), FLUX (Cloud), NEAR (L1 AI), ORAI/Oraichain (AI Oracle), TON/Toncoin (L1 Telegram), CGPT/ChainGPT (AI).
+
+CURRENT LIVE DATA:
+${prices}
+BTC Dominance: ~62% (Bitcoin Season)
+Fear & Greed: 19 (Extreme Fear)
+Altcoin Season Index: 34/100
+
+KEY STRATEGIES ACTIVE:
+1. BTC Dominance: >60% = Bitcoin season. Hold BTC. Reduce alts. Watch TON/NEAR/SUI first.
+2. Volume Profile: POC at $65,200 for BTC. VAH $67,800 resistance. VAL $63,400 support. LVN zones at $61K and $69K.
+3. Money Flow: Gold inflow 72% = risk-off. Capital leaving crypto. AI tokens holding better.
+4. Wall Street Cycle: 15 phases detected. Current: Extreme Fear (score 19) = historically best DCA zone.
+5. Whale Monitor: Checks all 10 coins every 30 min. Threshold: 2x volume = alert.
+6. Capital Rotation: Phase 1 (BTC dominant). Phase 2 next: TON/NEAR/SUI. Phase 3: SEI/KAS/RUNE/FLUX. Phase 4: AKT/ORAI/CGPT.
+
+Respond in English. Be specific, concise, and actionable. Reference actual prices and % changes from the data above. Format key numbers clearly. Maximum 200 words per response unless doing deep analysis.`;
+}
+
+async function sendMsg() {
+  const input = document.getElementById('ai-input');
+  const btn = document.getElementById('ai-send-btn');
+  const text = input.value.trim();
+  if (!text || !GROQ_KEY) {
+    if (!GROQ_KEY) addMsg('bot', '⚠️ Please set your Groq API key first. Click 🔑 Key in the top-right header.');
+    return;
+  }
+  addMsg('user', text);
+  chatHistory.push({role:'user', content:text});
+  input.value = '';
+  btn.disabled = true;
+  addTyping();
+
+  try {
+    const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'Authorization':'Bearer '+GROQ_KEY},
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: 500,
+        temperature: 0.4,
+        messages: [
+          {role:'system', content: buildSystemPrompt()},
+          ...chatHistory.slice(-10)
+        ]
+      })
+    });
+    const data = await r.json();
+    const reply = data.choices?.[0]?.message?.content || 'Sorry, I had trouble responding. Please try again.';
+    removeTyping();
+    addMsg('bot', reply);
+    chatHistory.push({role:'assistant', content:reply});
+    if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+  } catch (e) {
+    removeTyping();
+    addMsg('bot', '⚠️ Connection error. Check your Groq API key or try again in a moment.');
+  }
+  btn.disabled = false;
+}
+</script>
+</body>
+</html>
